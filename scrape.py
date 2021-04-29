@@ -1,4 +1,5 @@
 import requests
+import regex
 from bs4 import BeautifulSoup
 
 # # # TV SHOW
@@ -56,24 +57,36 @@ from bs4 import BeautifulSoup
 # # ACTOR
 # Creating the request
 headers = {"Accept-Encoding": "identity"}
-page = requests.get("https://www.imdb.com/name/nm0000375", headers=headers)
+page = requests.get("https://www.imdb.com/name/nm0262635", headers=headers)
 soup = BeautifulSoup(page.text, "html.parser")
 
 print("\n-----------------------\n")
 
 # Actor name
-for name in soup.select(".name-overview-widget__section .header span"):
-    print("Name: ", name.text)
+[fname, lname] = soup.select(".name-overview-widget__section .header span")[0]
+print("First name:", fname)
+print("Last name:", lname)
+# for name in soup.select(".name-overview-widget__section .header span"):
+#     print(name.text)
+    # [fname, lname] = regex.split(' ', name.text, 1)
+    # print("First name:", fname)
+    # print("Last name:", lname)
 
-# Actor birthplace
-for birthplace in soup.select("#name-born-info > a"):
-    print("Birthplace: ", birthplace.text)
+# # Actor birthplace
+# # TASK: Needs to be split up into city, state and country
+# # Examples: 
+# # Manhattan, New York City, New York, USA
+# # Melbourne, Victoria, Australia
+# for birthplace in soup.select("#name-born-info > a"):
+#     # regex.split(' ', name.text, 1)
+#     print("Birthplace:", birthplace.text)
 
-# Actor birthday
-for birthday in soup.select("#name-born-info time"):
-    print("Birthday: ", birthday["datetime"])
+# # Actor birthday
+# for birthday in soup.select("#name-born-info time"):
+#     print("Birthday:", birthday["datetime"])
 
-print("Known For:", end=" ")
-for movie in soup.select("#knownfor .knownfor-title .knownfor-title-role a"):
-    print(movie["title"], end=", ")
-print("\n\n")
+# # Known for
+# print("Known For:", end=" ")
+# for movie in soup.select("#knownfor .knownfor-title .knownfor-title-role a"):
+#     print(movie["title"], end=", ")
+# print("\n\n")
