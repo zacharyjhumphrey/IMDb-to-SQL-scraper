@@ -8,10 +8,13 @@ python3 -m venv env
 
 # Activate env
 # # Windows
-.\env\Scripts\actiavte
+.\env\Scripts\activate
 
 # # MacOS
 source env/bin/activate
 
 # Install requirements
 pip install -r requirements.txt
+
+# Run scraper
+python scrape.py
