@@ -18,3 +18,9 @@ pip install -r requirements.txt
 
 # Run scraper
 python scrape.py
+
+# Username
+zach
+
+# Password
+password
