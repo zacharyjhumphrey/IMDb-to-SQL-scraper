@@ -5,6 +5,35 @@ import cx_Oracle
 from review import Review 
 from actor import Actor, Director, Writer
 
+# REVIEW ---------------------------------
+
+
+class Review:
+    # static
+    query = []
+
+    # public
+    ssn_number = 0
+
+    def __init__(self, username, m_id, publish_date, content, stars, num_votes):
+        self.movie_id = m_id
+        self.ssn_number = num
+        self.toSQL()
+        self.username = username
+        self.publish_date = publish_date
+        self.content = content
+        self.stars = stars
+        self.num_votes = num_votes
+
+        print('init')
+
+        self.toSQL()
+
+    def toSQL(self):
+        Review.query.append([self.username, self.id, sel.fpublish_date,
+                            self.content, self.stars, self.num_votes])
+
+
 class Movie:
     # static
     query = []
@@ -113,30 +142,27 @@ class Movie:
 
         # MOVIE REVIEWS ---------------------
         try:
-            i = 0
-            for review in review_soup.select("#main .lister-list .imdb-user-review:not(.with-spoiler)"):
-                if (i >= self.num_reviews):
-                    break
-                
-                # If the review does not have a star-rating, move on to the next review
-                if not isinstance(review.select_one(".rating-other-user-rating span:not(.point-scale)"), str):
+            for review in review_soup.select("#main .lister-list .imdb-user-review:not(.with-spoiler)"):                
+                username = review.select_one(".display-name-link a")
+                stars = review.select_one(
+                    ".rating-other-user-rating span:not(.point-scale)")
+                publish_date = review.select_one(".review-date")
+                content = review.select_one(".content .text")
+
+                num_votes_raw = review.select_one(".actions")
+
+                if not num_votes_raw: 
                     continue
 
-                username = review.select_one(".display-name-link a").text
-                stars = review.select_one(
-                    ".rating-other-user-rating span:not(.point-scale)").text
-                publish_date = review.select_one(".review-date").text
-                content = review.select_one(".content .text").text
-
-                num_votes_raw = review.select_one(".actions").text.strip()
-                num_votes_with_comma = regex.search(r'(\d|,)+', num_votes_raw)[0]
+                num_votes_with_comma = regex.search(r'(\d|,)+', num_votes_raw.text.strip())[0]
                 num_votes = num_votes_with_comma.replace(",", "")
 
-                Review(username, self.id, publish_date, content, stars, num_votes)
+                print('query review')
+                if username and publish_date and content and stars and num_votes:
+                    Review.query.append(
+                        [username.text, self.id, publish_date.text, content.text[:3500], stars.text, num_votes.text.strip()])
 
-                i += 1
-
-                self.reviews.append(new_review)
+                # Review(username, self.id, publish_date, content, stars, num_votes)
         except Exception as err:
             print(f'ERROR: Movie Reviews of {self.id}')
             print(err)
@@ -165,23 +191,3 @@ class Movie:
             i += 1
         print()
 
-# REVIEW ---------------------------------
-class Review:
-    # static
-    query = []
-
-    # public
-    ssn_number = 0
-
-    def __init__(self, username, m_id, publish_date, content, stars, num_votes):
-        self.movie_id = m_id
-        self.ssn_number = num
-        self.toSQL()
-        self.username = username
-        self.publish_date = publish_date 
-        self.content = content
-        self.stars = stars
-        self.num_votes = num_votes
-
-    def toSQL(self):
-        Season.query.append([self.username, self.id, sel.fpublish_date, self.content, self.stars, self.num_votes])

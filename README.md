@@ -18,3 +18,5 @@ pip install -r requirements.txt
 
 # Run scraper
 python scrape.py
+
+2147 tuples
